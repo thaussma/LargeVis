@@ -262,7 +262,7 @@ void LargeVis::annoy_thread(int id)
 	for (long long i = lo; i < hi; ++i)
 	{
 		cur_annoy_index->get_nns_by_item(i, n_neighbors + 1, (n_neighbors + 1) * n_trees, &knn_vec[i], NULL);
-		for (long long j = 0; j < knn_vec[i].size(); ++j)
+		for (long long j = 0; j < (long long)knn_vec[i].size(); ++j)
 			if (knn_vec[i][j] == i)
 			{
 				knn_vec[i].erase(knn_vec[i].begin() + j);
@@ -315,7 +315,7 @@ void LargeVis::propagation_thread(int id)
 			y = v1[i];
 			check[y] = x;
 			heap.push(std::make_pair(CalcDist(x, y), y));
-			if (heap.size() == n_neighbors + 1) heap.pop();
+			if ((long long)heap.size() == n_neighbors + 1) heap.pop();
 		}
 		for (i = 0; i < l1; ++i)
 		{
@@ -325,7 +325,7 @@ void LargeVis::propagation_thread(int id)
 			{
 				check[y] = x;
 				heap.push(std::make_pair(CalcDist(x, y), (int)y));
-				if (heap.size() == n_neighbors + 1) heap.pop();
+				if ((long long)heap.size() == n_neighbors + 1) heap.pop();
 			}
 		}
 		while (!heap.empty())
@@ -348,7 +348,7 @@ void LargeVis::run_propagation()
 {
 	for (int i = 0; i < n_propagations; ++i)
 	{
-		printf("Running propagation %d/%d%c", i + 1, n_propagations, 13);
+		printf("Running propagation %d/%lld%c", i + 1, n_propagations, 13);
 		fflush(stdout);
 		old_knn_vec = knn_vec;
 		knn_vec = new std::vector<int>[n_vertices];
@@ -448,7 +448,7 @@ void LargeVis::compute_similarity()
 	for (i = 0; i < n_vertices; ++i) head[i] = -1;
 	for (x = 0; x < n_vertices; ++x)
 	{
-		for (i = 0; i < knn_vec[x].size(); ++i)
+		for (i = 0; i < (long long)knn_vec[x].size(); ++i)
 		{
 			edge_from.push_back((int)x);
 			edge_to.push_back((int)(y = knn_vec[x][i]));
@@ -505,13 +505,13 @@ void LargeVis::test_accuracy()
 		for (y = 0; y < n_vertices; ++y) if (x != y)
 		{
 			heap->push(std::make_pair(CalcDist(x, y), y));
-			if (heap->size() == n_neighbors + 1) heap->pop();
+			if ((long long)heap->size() == n_neighbors + 1) heap->pop();
 		}
 		while (!heap->empty())
 		{
 			y = heap->top().second;
 			heap->pop();
-			for (j = 0; j < knn_vec[x].size(); ++j) if (knn_vec[x][j] == y)
+			for (j = 0; j < (long long)knn_vec[x].size(); ++j) if (knn_vec[x][j] == y)
 				++hit_case;
 		}
 	}
